@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>ניהול קופונים אישי</h1>
+      <% if (currentUser) { %>
+      <nav>
+        <a href="/dashboard">דשבורד</a>
+        <a href="/coupons">קופונים</a>
+        <form method="post" action="/logout" class="inline-form">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <button class="link-btn">התנתקות</button>
+        </form>
+      </nav>
+      <% } %>
+    </header>
+
+    <main class="container">
+      <% if (error) { %><div class="alert error"><%= error %></div><% } %>
+      <% if (success) { %><div class="alert success"><%= success %></div><% } %>

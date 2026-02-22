@@ -1,0 +1,64 @@
+<%- include('partials/header', { title: 'קופונים' }) %>
+<section class="card">
+  <div class="row between">
+    <h2>רשימת קופונים</h2>
+    <a class="button" href="/coupons/new">הוספת קופון</a>
+  </div>
+
+  <form class="filter-grid" method="get" action="/coupons">
+    <input type="text" name="q" value="<%= filters.q || '' %>" placeholder="חיפוש לפי כותרת או מותג" />
+    <select name="status">
+      <option value="">כל הסטטוסים</option>
+      <option value="active" <%= filters.status === 'active' ? 'selected' : '' %>>פעיל</option>
+      <option value="used" <%= filters.status === 'used' ? 'selected' : '' %>>מומש</option>
+      <option value="expired" <%= filters.status === 'expired' ? 'selected' : '' %>>פג תוקף</option>
+    </select>
+    <select name="category">
+      <option value="">כל הקטגוריות</option>
+      <% categories.forEach(c => { %>
+        <option value="<%= c.category %>" <%= filters.category === c.category ? 'selected' : '' %>><%= c.category %></option>
+      <% }) %>
+    </select>
+    <button type="submit">סינון</button>
+  </form>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>כותרת</th><th>מותג</th><th>קטגוריה</th><th>ערך</th><th>תפוגה</th><th>סטטוס</th><th>פעולות</th></tr></thead>
+      <tbody>
+        <% coupons.forEach(coupon => {
+          const days = Math.ceil((new Date(coupon.expiration_date) - new Date()) / (1000 * 60 * 60 * 24));
+          const isSoon = coupon.status === 'active' && days >= 0 && days <= 7;
+        %>
+        <tr>
+          <td><%= coupon.title %></td>
+          <td><%= coupon.brand %></td>
+          <td><%= coupon.category || '-' %></td>
+          <td>₪<%= Number(coupon.value).toFixed(2) %></td>
+          <td><%= coupon.expiration_date %></td>
+          <td>
+            <% if (coupon.status === 'expired') { %><span class="badge red">פג תוקף</span>
+            <% } else if (coupon.status === 'used') { %><span class="badge gray">מומש</span>
+            <% } else if (isSoon) { %><span class="badge yellow">פג בקרוב</span>
+            <% } else { %><span class="badge green">פעיל</span><% } %>
+          </td>
+          <td class="actions">
+            <a href="/coupons/<%= coupon.id %>/edit">עריכה</a>
+            <% if (coupon.status === 'active') { %>
+            <form method="post" action="/coupons/<%= coupon.id %>/use" class="inline-form">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button>סמן כמומש</button>
+            </form>
+            <% } %>
+            <form method="post" action="/coupons/<%= coupon.id %>/delete" class="inline-form" onsubmit="return confirm('בטוח שברצונך למחוק את הקופון?');">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button class="danger">מחיקה</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</section>
+<%- include('partials/footer') %>
