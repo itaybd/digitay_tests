@@ -1,0 +1,39 @@
+<%- include('partials/header', { title: isEdit ? 'עריכת קופון' : 'קופון חדש' }) %>
+<section class="card">
+  <h2><%= isEdit ? 'עריכת קופון' : 'הוספת קופון חדש' %></h2>
+  <form method="post" action="<%= action %>" class="form-grid">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <label>כותרת *</label>
+    <input name="title" value="<%= coupon.title || '' %>" required />
+
+    <label>מותג *</label>
+    <input name="brand" value="<%= coupon.brand || '' %>" required />
+
+    <label>קטגוריה</label>
+    <input name="category" value="<%= coupon.category || '' %>" />
+
+    <label>ערך (₪) *</label>
+    <input name="value" type="number" step="0.01" min="0" value="<%= coupon.value || '' %>" required />
+
+    <label>תאריך רכישה</label>
+    <input name="purchase_date" type="date" value="<%= coupon.purchase_date || '' %>" />
+
+    <label>תאריך תפוגה *</label>
+    <input name="expiration_date" type="date" value="<%= coupon.expiration_date || '' %>" required />
+
+    <% if (isEdit) { %>
+    <label>סטטוס</label>
+    <select name="status">
+      <option value="active" <%= coupon.status === 'active' ? 'selected' : '' %>>פעיל</option>
+      <option value="used" <%= coupon.status === 'used' ? 'selected' : '' %>>מומש</option>
+      <option value="expired" <%= coupon.status === 'expired' ? 'selected' : '' %>>פג תוקף</option>
+    </select>
+    <% } %>
+
+    <label>הערות</label>
+    <textarea name="notes"><%= coupon.notes || '' %></textarea>
+
+    <button type="submit"><%= isEdit ? 'שמירת שינויים' : 'שמירה' %></button>
+  </form>
+</section>
+<%- include('partials/footer') %>

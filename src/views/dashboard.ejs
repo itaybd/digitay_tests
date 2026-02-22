@@ -1,0 +1,34 @@
+<%- include('partials/header', { title: 'דשבורד' }) %>
+<section class="stats-grid">
+  <article class="card"><h3>שווי קופונים פעילים</h3><p>₪<%= Number(totals.active_value).toFixed(2) %></p></article>
+  <article class="card"><h3>שווי קופונים שמומשו</h3><p>₪<%= Number(totals.used_value).toFixed(2) %></p></article>
+  <article class="card"><h3>פגי תוקף ב־7 ימים הקרובים</h3><p><%= expiringSoon %></p></article>
+</section>
+<section class="charts-grid">
+  <article class="card"><h3>שווי קופונים לפי קטגוריה</h3><canvas id="catChart"></canvas></article>
+  <article class="card"><h3>התפלגות לפי סטטוס</h3><canvas id="statusChart"></canvas></article>
+</section>
+<script>
+  const categories = <%- JSON.stringify(byCategory) %>;
+  const statuses = <%- JSON.stringify(byStatus) %>;
+  new Chart(document.getElementById('catChart'), {
+    type: 'bar',
+    data: {
+      labels: categories.map(c => c.category),
+      datasets: [{ label: 'שווי (₪)', data: categories.map(c => c.total), backgroundColor: '#4f46e5' }]
+    }
+  });
+
+  const statusMap = { active: 'פעיל', used: 'מומש', expired: 'פג תוקף' };
+  new Chart(document.getElementById('statusChart'), {
+    type: 'doughnut',
+    data: {
+      labels: statuses.map(s => statusMap[s.status] || s.status),
+      datasets: [{
+        data: statuses.map(s => s.count),
+        backgroundColor: ['#22c55e', '#9ca3af', '#ef4444']
+      }]
+    }
+  });
+</script>
+<%- include('partials/footer') %>

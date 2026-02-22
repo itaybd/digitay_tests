@@ -1,0 +1,13 @@
+<%- include('partials/header', { title: 'הרשמה' }) %>
+<section class="card auth-card">
+  <h2>הרשמה</h2>
+  <form method="post" action="/register" class="form-grid">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <label>אימייל</label>
+    <input name="email" type="email" required />
+    <label>סיסמה (לפחות 8 תווים)</label>
+    <input name="password" type="password" required minlength="8" />
+    <button type="submit">יצירת משתמש</button>
+  </form>
+</section>
+<%- include('partials/footer') %>
